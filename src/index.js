@@ -12,8 +12,8 @@ const headingIArray = drawLetterI();
 const headingNArray = drawLetterN();
 const titleId = "IDENTIFICATION";
 const titleProgram = "PROGRAM";
-// Last Index of Line, Index 0 of Column
-currentInputCoordinates = [consoleTableLines - 1, 0];
+// Index 5 of Line, Last Index of Column
+currentInputCoordinates = [consoleTableLines - 3, 40];
 
 // Render entry page of identification program
 const consoleTable = document.getElementById("consoleTable");
@@ -50,6 +50,7 @@ for(let i=0; i<consoleTableArray.length; i++){
             cell.innerHTML = consoleTableArray[i][j];
     }
 }
+outputLine();
 output("Strike a key when ready ...");
 
 // Output text in console
@@ -57,6 +58,25 @@ function output(text = ""){
     for(let i=0; i<text.length; i++){
         addConsoleChar(text[i]);
     }
+}
+
+// Output a line in console
+function outputLine(){
+    let [l, c] = currentInputCoordinates;
+    c = 0;
+    if(l >= consoleTableLines - 2){
+        l = consoleTableLines - 1;
+        consoleTableArray.shift();
+        consoleTableArray.shift();
+        consoleTableArray.push([]);
+        consoleTableArray.push([]);
+    }
+    else{
+        consoleTableArray[l+1] = [];
+        l = l + 2;
+    }
+    updateConsoleTable();
+    currentInputCoordinates = [l, c];
 }
 
 // Output character in console

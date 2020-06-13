@@ -4,14 +4,18 @@ let consoleTableArray = [];
 for(let x=0; x<consoleTableLines; x++){
     consoleTableArray.push([]);
 }
+// Index 0 of Line, Index 0 of Column
+let currentInputCoordinates = [0, 0];
 
 const headingPArray = drawLetterP();
 const headingIArray = drawLetterI();
 const headingNArray = drawLetterN();
 const titleId = "IDENTIFICATION";
 const titleProgram = "PROGRAM";
+// Last Index of Line, Index 0 of Column
+currentInputCoordinates = [consoleTableLines - 1, 0];
 
-// Render console table
+// Render entry page of identification program
 const consoleTable = document.getElementById("consoleTable");
 for(let i=0; i<consoleTableArray.length; i++){
     const row = consoleTable.insertRow(i);
@@ -44,6 +48,48 @@ for(let i=0; i<consoleTableArray.length; i++){
         }
         if(consoleTableArray[i][j])
             cell.innerHTML = consoleTableArray[i][j];
+    }
+}
+output("Strike a key when ready ...");
+
+// Output text in console
+function output(text = ""){
+    for(let i=0; i<text.length; i++){
+        addConsoleChar(text[i]);
+    }
+}
+
+// Output character in console
+function addConsoleChar(char = ""){
+    let [l, c] = currentInputCoordinates;
+    consoleTableArray[l][c] = char;
+    consoleTable.rows[l].cells[c].innerHTML = char;
+    c++;
+    // If the character has passed the length of a line
+    if(c >= consoleTableLength){
+        c = 0;
+        // If the current line is at the last line
+        if(l == consoleTableLines - 1){
+            l = consoleTableLines - 1;
+            consoleTableArray.shift();
+            consoleTableArray.push([]);
+            updateConsoleTable();
+        }
+        else{
+            l++;
+        }
+    }
+    currentInputCoordinates = [l, c];
+}
+
+function updateConsoleTable(){
+    for(let i=0; i<consoleTableArray.length; i++){
+        for(let j=0; j<consoleTableLength; j++){
+            if(consoleTableArray[i][j])
+                consoleTable.rows[i].cells[j].innerHTML = consoleTableArray[i][j];
+            else
+                consoleTable.rows[i].cells[j].innerHTML = "";
+        }
     }
 }
 

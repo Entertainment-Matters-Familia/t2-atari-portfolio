@@ -52,6 +52,7 @@ for(let i=0; i<consoleTableArray.length; i++){
 }
 outputLine();
 output("Strike a key when ready ...");
+pause();
 
 // Output text in console
 function output(text = ""){
@@ -111,6 +112,31 @@ function updateConsoleTable(){
                 consoleTable.rows[i].cells[j].innerHTML = "";
         }
     }
+}
+
+// Set cursor interval, return setInterval handle
+function cursorInterval(){
+    const [l, c] = currentInputCoordinates;
+    let showCursor = true;
+    return setInterval(() => {
+        if(showCursor){
+            consoleTable.rows[l].cells[c].style.background = "black";
+            showCursor = false;
+        }
+        else{
+            consoleTable.rows[l].cells[c].style.background = "none";
+            showCursor = true;
+        }
+    }, 500);
+}
+
+// Pause the console, press any key to continue
+function pause(callbackFn){
+    const intervalHandle = cursorInterval();
+    document.onkeyup = e => {
+        clearInterval(intervalHandle);
+        callbackFn();
+    };
 }
 
 function drawLetterP(){

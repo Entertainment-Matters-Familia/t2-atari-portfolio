@@ -1,7 +1,7 @@
 import { sha256 } from 'js-sha256';
 
 const audioCompleted = document.getElementById("audioCompleted");
-audioCompleted.volume = 0.5;
+audioCompleted.volume = 0.3;
 
 const consoleTableLength = 40;
 const consoleTableLines = 8;
@@ -21,8 +21,9 @@ const titleProgram = "PROGRAM";
 currentInputCoordinates = [consoleTableLines - 3, 40];
 
 // PIN
+const pinLength = 4;
 let pin = "9003";
-const hashedPin = hashPin(pin);
+let hashedPin = hashPin(pin);
 
 // Render entry page of identification program
 const consoleTable = document.getElementById("consoleTable");
@@ -84,12 +85,58 @@ function matchHashedPin(){
             outputLine();
             output("PIN IDENTIFICATION NUMBER: " + pin);
             audioCompleted.play();
+
+            // Let's hack again!
+            const timeoutHandle = setTimeout(() => {
+                clearTimeout(timeoutHandle);
+                outputLine();
+                output("Let's hack again.");
+                endLine();
+                inputPin();
+            }, 1500);
         }
     }, 1);
 }
 
 function formatIntegerToPinLengthString(integer){
     return String(integer).padStart(pin.length, "0");
+}
+
+function inputPin(){
+    output("Please enter another PIN: ");
+
+    pin = "";
+    const intervalHandle = cursorInterval();
+    const enterPinEvent = (e) => {
+        if(e.key.match(/[0-9]/g) != null && pin.length < pinLength){
+            pin += e.key;
+            hideCursor();
+            output(e.key);
+        }
+        // Backspace
+        if(e.keyCode == 8 && pin.length > 0){
+            pin = pin.slice(0, -1);
+            hideCursor();
+            removeConsoleChar();
+        }
+        // Enter
+        if(e.keyCode == 13){
+            hideCursor();
+            clearInterval(intervalHandle);
+            document.removeEventListener("keyup", enterPinEvent);
+            endLine();
+
+            // If pin length does not match, input again
+            if(pin.length != pinLength){
+                inputPin();
+            }
+            else{
+                hashedPin = hashPin(pin);
+                matchHashedPin();
+            }
+        }
+    };
+    document.addEventListener("keyup", enterPinEvent);
 }
 
 // Output text in console
@@ -135,11 +182,20 @@ function endLine(){
     currentInputCoordinates = [l, c];
 }
 
-// Output character in console
+// Remove a character in console
+function removeConsoleChar(){
+    let [l, c] = currentInputCoordinates;
+    c--;
+    consoleTableArray[l][c] = '';
+    consoleTable.rows[l].cells[c].innerHTML = consoleTableArray[l][c];
+    currentInputCoordinates = [l, c];
+}
+
+// Output a character in console
 function addConsoleChar(char = ""){
     let [l, c] = currentInputCoordinates;
     consoleTableArray[l][c] = char;
-    consoleTable.rows[l].cells[c].innerHTML = char;
+    consoleTable.rows[l].cells[c].innerHTML = consoleTableArray[l][c];
     c++;
     // If the character has passed the length of a line
     if(c >= consoleTableLength){
@@ -200,7 +256,7 @@ function pause(callbackFn){
     const intervalHandle = cursorInterval();
     const continueEvent = (e) => {
         // If key code is not F11, F12
-        if(e.keyCode != 122 || e.keyCode != 123){
+        if(e.keyCode != 122 && e.keyCode != 123){
             document.removeEventListener("keyup", continueEvent);
             clearInterval(intervalHandle);
             hideCursor();

@@ -52,7 +52,9 @@ for(let i=0; i<consoleTableArray.length; i++){
 }
 outputLine();
 output("Strike a key when ready ...");
-pause();
+pause(() => {
+    console.log("continue");
+});
 
 // Output text in console
 function output(text = ""){
@@ -75,6 +77,23 @@ function outputLine(){
     else{
         consoleTableArray[l+1] = [];
         l = l + 2;
+    }
+    updateConsoleTable();
+    currentInputCoordinates = [l, c];
+}
+
+// End a line in console
+function endLine(){
+    let [l, c] = currentInputCoordinates;
+    c = 0;
+    if(l >= consoleTableLines - 1){
+        l = consoleTableLines - 1;
+        consoleTableArray.shift();
+        consoleTableArray.push([]);
+    }
+    else{
+        consoleTableArray[l+1] = [];
+        l = l + 1;
     }
     updateConsoleTable();
     currentInputCoordinates = [l, c];
@@ -117,26 +136,39 @@ function updateConsoleTable(){
 // Set cursor interval, return setInterval handle
 function cursorInterval(){
     const [l, c] = currentInputCoordinates;
-    let showCursor = true;
+    let allowCursor = true;
     return setInterval(() => {
-        if(showCursor){
-            consoleTable.rows[l].cells[c].style.background = "black";
-            showCursor = false;
+        if(allowCursor){
+            showCursor();
+            allowCursor = false;
         }
         else{
-            consoleTable.rows[l].cells[c].style.background = "none";
-            showCursor = true;
+            hideCursor();
+            allowCursor = true;
         }
     }, 500);
+}
+
+function showCursor(){
+    const [l, c] = currentInputCoordinates;
+    consoleTable.rows[l].cells[c].style.background = "black";
+}
+
+function hideCursor(){
+    const [l, c] = currentInputCoordinates;
+    consoleTable.rows[l].cells[c].style.background = "none";
 }
 
 // Pause the console, press any key to continue
 function pause(callbackFn){
     const intervalHandle = cursorInterval();
-    document.onkeyup = e => {
+    const continueEvent = (e) => {
+        document.removeEventListener("keyup", continueEvent);
         clearInterval(intervalHandle);
+        hideCursor();
         callbackFn();
     };
+    document.addEventListener("keyup", continueEvent);
 }
 
 function drawLetterP(){

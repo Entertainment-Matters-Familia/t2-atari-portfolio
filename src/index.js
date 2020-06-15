@@ -1,3 +1,5 @@
+import { sha256 } from 'js-sha256';
+
 const consoleTableLength = 40;
 const consoleTableLines = 8;
 let consoleTableArray = [];
@@ -14,6 +16,10 @@ const titleId = "IDENTIFICATION";
 const titleProgram = "PROGRAM";
 // Index 5 of Line, Last Index of Column
 currentInputCoordinates = [consoleTableLines - 3, 40];
+
+// PIN
+let pin = "9003";
+const hashedPin = hashPin(pin);
 
 // Render entry page of identification program
 const consoleTable = document.getElementById("consoleTable");
@@ -53,11 +59,38 @@ for(let i=0; i<consoleTableArray.length; i++){
 outputLine();
 output("Strike a key when ready ...");
 pause(() => {
-    console.log("continue");
+    matchHashedPin();
 });
 
+function hashPin(pin = String(pin)){
+    return sha256(pin);
+}
+
+// Match the hashed pin from 9999 to 0000
+function matchHashedPin(){
+    let i = 10000;
+    // set interval to loop the hash pin, just to show the output animation
+    const intervalHandle = setInterval(() => {
+        i--;
+        const tempPin = formatIntegerToPinLengthString(i);
+        const hashedTempPin = hashPin(tempPin);
+        output(hashedTempPin);
+        endLine();
+        output(tempPin);
+        if(hashedTempPin == hashedPin){
+            clearInterval(intervalHandle);
+            outputLine();
+            output("PIN IDENTIFICATION NUMBER: " + pin);
+        }
+    }, 1);
+}
+
+function formatIntegerToPinLengthString(integer){
+    return String(integer).padStart(pin.length, "0");
+}
+
 // Output text in console
-function output(text = ""){
+function output(text = String(text)){
     for(let i=0; i<text.length; i++){
         addConsoleChar(text[i]);
     }

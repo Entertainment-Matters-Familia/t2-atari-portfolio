@@ -33,12 +33,17 @@
                 width: 2.4rem;
                 height: 3.0rem;
             }
+            #audioCompleted{
+                display: none;
+            }
         </style>
     </head>
     <body>
         <table id="consoleTable">
-
         </table>
+        <audio id="audioCompleted" controls>
+            <source src="src/assets/audio/completed.wav" type="audio/wav">
+        </audio>
         <!-- By default webpack dev output will be main.js -->
         <script src="main.js"></script>
     </body>

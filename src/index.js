@@ -1,5 +1,8 @@
 import { sha256 } from 'js-sha256';
 
+const audioCompleted = document.getElementById("audioCompleted");
+audioCompleted.volume = 0.5;
+
 const consoleTableLength = 40;
 const consoleTableLines = 8;
 let consoleTableArray = [];
@@ -69,7 +72,6 @@ function hashPin(pin = String(pin)){
 // Match the hashed pin from 9999 to 0000
 function matchHashedPin(){
     let i = 10000;
-    // set interval to loop the hash pin, just to show the output animation
     const intervalHandle = setInterval(() => {
         i--;
         const tempPin = formatIntegerToPinLengthString(i);
@@ -81,6 +83,7 @@ function matchHashedPin(){
             clearInterval(intervalHandle);
             outputLine();
             output("PIN IDENTIFICATION NUMBER: " + pin);
+            audioCompleted.play();
         }
     }, 1);
 }
@@ -196,10 +199,13 @@ function hideCursor(){
 function pause(callbackFn){
     const intervalHandle = cursorInterval();
     const continueEvent = (e) => {
-        document.removeEventListener("keyup", continueEvent);
-        clearInterval(intervalHandle);
-        hideCursor();
-        callbackFn();
+        // If key code is not F11, F12
+        if(e.keyCode != 122 || e.keyCode != 123){
+            document.removeEventListener("keyup", continueEvent);
+            clearInterval(intervalHandle);
+            hideCursor();
+            callbackFn();
+        }
     };
     document.addEventListener("keyup", continueEvent);
 }

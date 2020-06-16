@@ -17,3 +17,7 @@ At ${project_root}, run **./start.sh** or **npx webpack-dev-server**.
 At ${project_root}, run **./dist.sh** or **npx webpack**.
 
 A **main.js** will be output at ${project_root}.
+
+## License
+
+All right reserved to Entertainment Matters.

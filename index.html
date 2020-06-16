@@ -4,19 +4,33 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>Terminator 2 Atari Portfolio</title>
         <style>
+            :root{ font-size: 62.5%; }
+            @media only screen and (max-width: 1440px) {
+                :root{ font-size: 44%; }
+            }
+            @media only screen and (max-width: 1280px) {
+                :root{ font-size: 38%; }
+            }
+            @media only screen and (max-width: 1024px) {
+                :root{ font-size: 30%; }
+            }
+            @media only screen and (max-width: 768px) {
+                :root{ font-size: 22%; }
+            }
+            @media only screen and (max-width: 640px) {
+                :root{ font-size: 16%; }
+            }
             @font-face{
                 font-family: "PressStart2P";
                 font-weight: normal;
                 src: url("./src/assets/fonts/PressStart2P-vaV7.ttf");
-            }
-            :root{
-                font-size: 62.5%;
-            }
+            }            
             html,
             body {
                 height: 100%;
                 overflow: hidden;
                 display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 font-family: "PressStart2P";
@@ -33,6 +47,12 @@
                 width: 2.4rem;
                 height: 3.0rem;
             }
+            #consoleTableHint {
+                padding-top: 1.0rem;
+                align-self: flex-end;
+                display: none;
+                color: #5d5d5d;
+            }
             #audioCompleted{
                 display: none;
             }
@@ -41,6 +61,7 @@
     <body>
         <table id="consoleTable">
         </table>
+        <div id="consoleTableHint">(ESC to stop)</div>
         <audio id="audioCompleted" controls>
             <source src="src/assets/audio/completed.wav" type="audio/wav">
         </audio>

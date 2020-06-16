@@ -3,6 +3,8 @@ import { sha256 } from 'js-sha256';
 const audioCompleted = document.getElementById("audioCompleted");
 audioCompleted.volume = 0.3;
 
+const consoleTableHint = document.getElementById("consoleTableHint");
+
 const consoleTableLength = 40;
 const consoleTableLines = 8;
 let consoleTableArray = [];
@@ -72,6 +74,7 @@ function hashPin(pin = String(pin)){
 
 // Match the hashed pin from 9999 to 0000
 function matchHashedPin(){
+    showConsoleTableHint();
     let i = 10000;
     const intervalHandle = setInterval(() => {
         i--;
@@ -81,6 +84,7 @@ function matchHashedPin(){
         endLine();
         output(tempPin);
         if(hashedTempPin == hashedPin){
+            hideConsoleTableHint();
             clearInterval(intervalHandle);
             outputLine();
             output("PIN IDENTIFICATION NUMBER: " + pin);
@@ -88,14 +92,24 @@ function matchHashedPin(){
 
             // Let's hack again!
             const timeoutHandle = setTimeout(() => {
-                clearTimeout(timeoutHandle);
+                clearTimeout(timeoutHandle);                
                 outputLine();
                 output("Let's hack again.");
                 endLine();
                 inputPin();
             }, 1500);
-        }
+        }        
     }, 1);
+    
+    // Matching hashed pin process will stop when user presses some keys
+    listenStopEvent(() => {
+        clearInterval(intervalHandle);
+        hideConsoleTableHint();
+        outputLine();
+        output("Let's hack again.");
+        endLine();
+        inputPin();
+    });
 }
 
 function formatIntegerToPinLengthString(integer){
@@ -251,6 +265,14 @@ function hideCursor(){
     consoleTable.rows[l].cells[c].style.background = "none";
 }
 
+function showConsoleTableHint(){
+    consoleTableHint.style.display = "flex";
+}
+
+function hideConsoleTableHint(){
+    consoleTableHint.style.display = "none";
+}
+
 // Pause the console, press any key to continue
 function pause(callbackFn){
     const intervalHandle = cursorInterval();
@@ -264,6 +286,18 @@ function pause(callbackFn){
         }
     };
     document.addEventListener("keyup", continueEvent);
+}
+
+// Stop a process when user presses some keys
+function listenStopEvent(callbackFn){
+    const stopEvent = (e) => {
+        // ESC or Ctrl + C
+        if(e.keyCode == 27 || (e.ctrlKey && e.keyCode == 67)){
+            document.removeEventListener("keyup", stopEvent);
+            callbackFn();
+        }
+    };
+    document.addEventListener("keyup", stopEvent);
 }
 
 function drawLetterP(){

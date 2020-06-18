@@ -5,18 +5,21 @@ The program is used for intercepting and retrieving an ATM card's PIN number.
 
 ## Getting Started
 
-At ${project_root}, run **npm install**.
+npm install
 
 ### Development Mode
 
-At ${project_root}, run **./start.sh** or **npx webpack-dev-server**.
+./start.sh
 
+<em>OR</em> npx webpack-dev-server
 
 ## Deployment
 
-At ${project_root}, run **./dist.sh** or **npx webpack**.
+./dist.sh
 
-A **main.js** will be output at ${project_root}.
+<em>OR</em> npx webpack
+
+A **main.js** file will be output at ${project_root}.
 
 ## Resource References
 
